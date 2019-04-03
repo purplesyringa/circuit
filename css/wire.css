@@ -1,0 +1,31 @@
+.wire {
+	display: inline-block;
+
+	background-color: #888;
+	height: 2px;
+	transform-origin: 0 1px;
+	margin-top: -1px;
+
+	position: absolute;
+}
+
+.wire.component-selected {
+	background-color: #884;
+}
+
+.edge {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	background-color: inherit;
+	border-radius: 50%;
+
+	position: absolute;
+	top: -2px;
+}
+.edge1 {
+	left: -3px;
+}
+.edge2 {
+	right: -3px;
+}
