@@ -681,6 +681,7 @@ function SummatorCircuit(n) {
 			for(let i = 0; i < n; i++) {
 				inputs.push({["B" + i]: [-1, 1 + n + i, "horizontal", -1, 1 + n + i]});
 			}
+			inputs.push({C: [-1, 1 + n + n, "horizontal", -1, 1 + n + n]});
 			for(let i = 0; i < n; i++) {
 				outputs.push({["D" + i]: [3, 1 + i, "horizontal", 4, 1 + i]});
 			}
@@ -700,7 +701,7 @@ function SummatorCircuit(n) {
 				a = (a << 1) | this.get(`A${i}`);
 				b = (b << 1) | this.get(`B${i}`);
 			}
-			let c = a + b;
+			let c = a + b + this.get("C");
 			for(let i = 0; i < n; i++) {
 				this.set(`D${i}`, c & 1);
 				c >>= 1;
