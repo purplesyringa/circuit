@@ -6,7 +6,7 @@ function createPinNode(x, y, direction) {
 	return node;
 }
 
-function renderPin(node, vertex) {
+function renderPin(node, vertex, name, direction) {
 	node.classList.remove("value0");
 	node.classList.remove("value1");
 	node.classList.remove("pin-not-ready");
@@ -15,6 +15,8 @@ function renderPin(node, vertex) {
 	} else {
 		node.classList.add("pin-not-ready");
 	}
+
+	node.innerHTML = `<span class="pin-name pin-name-${direction}">${name}</span>`;
 }
 
 
@@ -83,7 +85,8 @@ class Component {
 				x: x1,
 				y: y1,
 				activeX,
-				activeY
+				activeY,
+				direction
 			};
 			this.node.appendChild(node);
 		}
@@ -100,7 +103,8 @@ class Component {
 				x: x1,
 				y: y1,
 				activeX,
-				activeY
+				activeY,
+				direction
 			};
 			this.node.appendChild(node);
 		}
@@ -121,11 +125,15 @@ class Component {
 
 	render() {
 		// Render pins
-		for(const {node, vertex} of Object.values(this.inputs)) {
-			renderPin(node, vertex);
+		for(const name of Object.keys(this.inputs)) {
+			const {node, vertex, x, y, activeX, activeY, direction} = this.inputs[name];
+			const bidirection = direction === "horizontal" ? (x < activeX ? "right" : "left") : (y < activeY ? "down" : "up");
+			renderPin(node, vertex, this.showPinLabels ? name : "", bidirection);
 		}
-		for(const {node, vertex} of Object.values(this.outputs)) {
-			renderPin(node, vertex);
+		for(const name of Object.keys(this.outputs)) {
+			const {node, vertex, x, y, activeX, activeY, direction} = this.outputs[name];
+			const bidirection = direction === "horizontal" ? (x < activeX ? "right" : "left") : (y < activeY ? "down" : "up");
+			renderPin(node, vertex, this.showPinLabels ? name : "", bidirection);
 		}
 
 		// Render label

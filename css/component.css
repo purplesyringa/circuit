@@ -33,6 +33,19 @@
 	position: absolute;
 }
 
+.pin-name {
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	font-size: 0.8rem;
+}
+.pin-name-left {
+	right: 4px;
+}
+.pin-name-right {
+	left: 4px;
+}
+
 .pin-horizontal {
 	width: 1rem;
 	height: 2px;

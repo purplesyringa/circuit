@@ -401,6 +401,7 @@ class SubCircuit extends Component {
 			`&#10214;${name}&#10215;`
 		);
 		this.inputNotRequired = true;
+		this.showPinLabels = true;
 		this.subField = subField;
 		this.circuitName = name;
 	}
@@ -459,6 +460,7 @@ class UserCircuit extends Component {
 			"USR"
 		);
 		this.inputNotRequired = true;
+		this.showPinLabels = true;
 
 		this.inputStr = inputStr;
 		this.outputStr = outputStr;
@@ -495,6 +497,7 @@ class RSTriggerCircuit extends Component {
 			],
 			"RS"
 		);
+		this.showPinLabels = true;
 		this._value = 0;
 	}
 	tick() {
