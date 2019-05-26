@@ -731,8 +731,9 @@ const CIRCUITS = {
 	A: BinaryCircuit("A", "&#x2191;", (a, b) => (a & b) ^ 1), // NAND
 	O: BinaryCircuit("O", "&#x2193;", (a, b) => (a | b) ^ 1), // NOR
 	X: BinaryCircuit("X", "=", (a, b) => a ^ b ^ 1), // XNOR
-	i: BinaryCircuit("i", "&rarr;", (a, b) => (a ^ 1) | b), // implication
 	n: UnaryCircuit("n", "&not;", a => a ^ 1), // NOT
+	y: BinaryCircuit("y", "&rarr;", (a, b) => (a ^ 1) | b), // implication
+	Y: BinaryCircuit("Y", "&#x219b;", (a, b) => a & (b ^ 1)), // not implication aka ANT
 	s: SwitchCircuit,
 	S: ControlSwitchCircuit,
 	l: LedCircuit,
