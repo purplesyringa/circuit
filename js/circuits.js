@@ -605,7 +605,7 @@ class AsyncFallDTriggerCircuit extends Component {
 	}
 	serialize() {
 		return {
-			type: "d",
+			type: "D",
 			x: this.x,
 			y: this.y,
 			value: this._value,
