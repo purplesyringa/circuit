@@ -532,6 +532,48 @@ class RSTriggerCircuit extends Component {
 	}
 };
 
+class DTriggerCircuit extends Component {
+	constructor(field, x, y) {
+		super(
+			field, x, y, 3, 3,
+			[
+				{D: [-1, 1, "horizontal", -1, 1]},
+				{C: [-1, 2, "horizontal", -1, 2]}
+			],
+			[
+				{Q: [3, 1, "horizontal", 4, 1]},
+				{"/Q": [3, 2, "horizontal", 4, 2]}
+			],
+			"D"
+		);
+		this.showPinLabels = true;
+		this._value = 0;
+	}
+	tick() {
+		if(this.get("C")) {
+			this._value = this.get("D");
+			this.set("Q", this._value);
+			this.set("/Q", this._value ^ 1);
+		} else {
+			this.set("Q", this._value);
+			this.set("/Q", this._value ^ 1);
+		}
+	}
+	serialize() {
+		return {
+			type: "d",
+			x: this.x,
+			y: this.y,
+			value: this._value
+		};
+	}
+	static deserialize(field, {x, y, value}) {
+		const rs = new DTriggerCircuit(field, x, y);
+		rs._value = value;
+		return rs;
+	}
+};
+
 
 const CIRCUITS = {
 	0: ValueCircuit(0),
@@ -554,5 +596,6 @@ const CIRCUITS = {
 	c: SubCircuit,
 	u: UserCircuit,
 	r: RSTriggerCircuit,
+	d: DTriggerCircuit,
 	wire: Wire
 };
