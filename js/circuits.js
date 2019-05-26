@@ -481,6 +481,54 @@ class UserCircuit extends Component {
 	}
 };
 
+class RSTriggerCircuit extends Component {
+	constructor(field, x, y) {
+		super(
+			field, x, y, 3, 3,
+			[
+				{R: [-1, 1, "horizontal", -1, 1]},
+				{S: [-1, 2, "horizontal", -1, 2]}
+			],
+			[
+				{Q: [3, 1, "horizontal", 4, 1]},
+				{"/Q": [3, 2, "horizontal", 4, 2]}
+			],
+			"RS"
+		);
+		this._value = 0;
+	}
+	tick() {
+		if(this.get("R") && this.get("S")) {
+			this.set("Q", 1);
+			this.set("/Q", 1);
+		} else if(this.get("R")) {
+			this.set("Q", 0);
+			this.set("/Q", 1);
+			this._value = 0;
+		} else if(this.get("S")) {
+			this.set("Q", 1);
+			this.set("/Q", 0);
+			this._value = 1;
+		} else {
+			this.set("Q", this._value);
+			this.set("/Q", this._value ^ 1);
+		}
+	}
+	serialize() {
+		return {
+			type: "r",
+			x: this.x,
+			y: this.y,
+			value: this._value
+		};
+	}
+	static deserialize(field, {x, y, value}) {
+		const rs = new RSTriggerCircuit(field, x, y);
+		rs._value = value;
+		return rs;
+	}
+};
+
 
 const CIRCUITS = {
 	0: ValueCircuit(0),
@@ -502,5 +550,6 @@ const CIRCUITS = {
 	t: TransistorCircuit,
 	c: SubCircuit,
 	u: UserCircuit,
+	r: RSTriggerCircuit,
 	wire: Wire
 };
