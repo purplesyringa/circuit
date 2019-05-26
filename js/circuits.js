@@ -365,7 +365,42 @@ class TransistorCircuit extends Component {
 		};
 	}
 	static deserialize(field, {x, y}) {
-		return new PipeCircuit(field, x, y);
+		return new TransistorCircuit(field, x, y);
+	}
+};
+
+class CommutatorCircuit extends Component {
+	constructor(field, x, y) {
+		super(
+			field, x, y, 2, 3,
+			[
+				{D0: [-1, 1, "horizontal", -1, 1]},
+				{D1: [-1, 2, "horizontal", -1, 2]},
+				{A: [1, 3, "vertical", 1, 4]}
+			],
+			[
+				{D: [2, 1, "horizontal", 3, 1]}
+			],
+			"&perp;"
+		);
+		this.inputNotRequired = true;
+	}
+	tick() {
+		if(this.get("A") === 0) {
+			this.set("D", this.get("D0"));
+		} else if(this.get("A") === 1) {
+			this.set("D", this.get("D1"));
+		}
+	}
+	serialize() {
+		return {
+			type: "T",
+			x: this.x,
+			y: this.y
+		};
+	}
+	static deserialize(field, {x, y}) {
+		return new CommutatorCircuit(field, x, y);
 	}
 };
 
@@ -742,6 +777,7 @@ const CIRCUITS = {
 	I: OutputCircuit,
 	p: PipeCircuit,
 	t: TransistorCircuit,
+	T: CommutatorCircuit,
 	c: SubCircuit,
 	u: UserCircuit,
 	r: RSTriggerCircuit,
