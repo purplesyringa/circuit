@@ -24,8 +24,12 @@ class Field {
 					}
 				} else if(e.key == ".") {
 					this.save();
+				} else if(e.key == ">") {
+					this.saveExternal();
 				} else if(e.key == ",") {
 					this.load();
+				} else if(e.key == "<") {
+					this.loadExternal();
 				}
 			};
 			this.node.onmousedown = e => {
@@ -162,6 +166,13 @@ class Field {
 		}
 		localStorage["circuit-" + name] = JSON.stringify(components);
 	}
+	saveExternal() {
+		let components = [];
+		for(const component of this.components) {
+			components.push(component.serialize());
+		}
+		prompt("[save] data:", JSON.stringify(components));
+	}
 	load(name) {
 		if(!name) {
 			name = prompt("[load] name?");
@@ -184,6 +195,15 @@ class Field {
 		this.tick();
 
 		return name;
+	}
+	loadExternal() {
+		let data = prompt("[load] data?");
+		data = JSON.parse(data);
+		this.vertexes = [];
+		this.components = data.map(d => {
+			return CIRCUITS[d.type].deserialize(this, d);
+		});
+		this.tick();
 	}
 
 
