@@ -568,9 +568,55 @@ class DTriggerCircuit extends Component {
 		};
 	}
 	static deserialize(field, {x, y, value}) {
-		const rs = new DTriggerCircuit(field, x, y);
-		rs._value = value;
-		return rs;
+		const trigger = new DTriggerCircuit(field, x, y);
+		trigger._value = value;
+		return trigger;
+	}
+};
+
+class AsyncFallDTriggerCircuit extends Component {
+	constructor(field, x, y) {
+		super(
+			field, x, y, 3, 3,
+			[
+				{D: [-1, 1, "horizontal", -1, 1]},
+				{C: [-1, 2, "horizontal", -1, 2]}
+			],
+			[
+				{Q: [3, 1, "horizontal", 4, 1]},
+				{"/Q": [3, 2, "horizontal", 4, 2]}
+			],
+			"D↘"
+		);
+		this.showPinLabels = true;
+		this._value = 0;
+		this._prevC = 0;
+	}
+	tick() {
+		if(!this.get("C") && this._prevC) {
+			this._value = this.get("D");
+			this.set("Q", this._value);
+			this.set("/Q", this._value ^ 1);
+		} else {
+			this.set("Q", this._value);
+			this.set("/Q", this._value ^ 1);
+		}
+		this._prevC = this.get("C");
+	}
+	serialize() {
+		return {
+			type: "d",
+			x: this.x,
+			y: this.y,
+			value: this._value,
+			prevC: this._prevC
+		};
+	}
+	static deserialize(field, {x, y, value, prevC}) {
+		const trigger = new AsyncFallDTriggerCircuit(field, x, y);
+		trigger._value = value;
+		trigger._prevC = prevC;
+		return trigger;
 	}
 };
 
@@ -597,5 +643,6 @@ const CIRCUITS = {
 	u: UserCircuit,
 	r: RSTriggerCircuit,
 	d: DTriggerCircuit,
+	D: AsyncFallDTriggerCircuit,
 	wire: Wire
 };
