@@ -620,6 +620,57 @@ class AsyncFallDTriggerCircuit extends Component {
 	}
 };
 
+function AsyncFallRegisterCircuit(n) {
+	class AsyncFallRegisterCircuit extends Component {
+		constructor(field, x, y) {
+			const inputs = [], outputs = [];
+			for(let i = 0; i < n; i++) {
+				inputs.push({["D" + i]: [-1, 1 + i, "horizontal", -1, 1 + i]});
+				outputs.push({["Q" + i]: [3, 1 + i, "horizontal", 4, 1 + i]});
+			}
+			inputs.push({C: [-1, 1 + n, "horizontal", -1, 1 + n]})
+
+			super(
+				field, x, y, 3, 1 + inputs.length,
+				inputs,
+				outputs,
+				`${n}↘`
+			);
+			this.showPinLabels = true;
+			this._value = [];
+			for(let i = 0; i < n; i++) {
+				this._value.push(0);
+			}
+			this._prevC = 0;
+		}
+		tick() {
+			if(!this.get("C") && this._prevC) {
+				for(let i = 0; i < n; i++) {
+					this._value[i] = this.get(`D${i}`);
+				}
+			}
+			for(let i = 0; i < n; i++) {
+				this.set(`Q${i}`, this._value[i]);
+			}
+			this._prevC = this.get("C");
+		}
+		serialize() {
+			return {
+				type: "~!@#$%^&*()"[n],
+				x: this.x,
+				y: this.y,
+				value: this._value
+			};
+		}
+		static deserialize(field, {x, y, value}) {
+			const register = new AsyncFallRegisterCircuit(field, x, y);
+			register._value = value;
+			return register;
+		}
+	};
+	return AsyncFallRegisterCircuit;
+}
+
 
 const CIRCUITS = {
 	0: ValueCircuit(0),
@@ -644,5 +695,6 @@ const CIRCUITS = {
 	r: RSTriggerCircuit,
 	d: DTriggerCircuit,
 	D: AsyncFallDTriggerCircuit,
+	"*": AsyncFallRegisterCircuit(8),
 	wire: Wire
 };
