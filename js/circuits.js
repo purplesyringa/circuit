@@ -245,7 +245,7 @@ class InputCircuit extends Component {
 	tick() {
 		this.name = `
 			<span style="color: ${this._inputValue ? "#0F0" : "#F00"}">
-				${this._inputName}&#10093;
+				${renderPinName(this._inputName)}&#10093;
 			</span>
 		`;
 		this.set(this._inputName, this._inputValue);
@@ -284,7 +284,7 @@ class OutputCircuit extends Component {
 				{[name]: [-1, 1, "horizontal", -1, 1]}
 			],
 			[],
-			`&#10092;${name}`
+			`&#10092;${renderPinName(name)}`
 		);
 		this._outputName = name;
 	}

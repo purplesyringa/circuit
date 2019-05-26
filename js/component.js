@@ -16,7 +16,15 @@ function renderPin(node, vertex, name, direction) {
 		node.classList.add("pin-not-ready");
 	}
 
-	node.innerHTML = `<span class="pin-name pin-name-${direction}">${name}</span>`;
+	node.innerHTML = `<span class="pin-name pin-name-${direction}">${renderPinName(name)}</span>`;
+}
+
+function renderPinName(name) {
+	if(name[0] === "/") {
+		return `<span style="display: inline-block; border-top: 2px solid; line-height: 0.9em">${name.substr(1)}</span>`;
+	} else {
+		return name;
+	}
 }
 
 
