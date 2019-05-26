@@ -671,6 +671,56 @@ function AsyncFallRegisterCircuit(n) {
 	return AsyncFallRegisterCircuit;
 }
 
+function SummatorCircuit(n) {
+	class SummatorCircuit extends Component {
+		constructor(field, x, y) {
+			const inputs = [], outputs = [];
+			for(let i = 0; i < n; i++) {
+				inputs.push({["A" + i]: [-1, 1 + i, "horizontal", -1, 1 + i]});
+			}
+			for(let i = 0; i < n; i++) {
+				inputs.push({["B" + i]: [-1, 1 + n + i, "horizontal", -1, 1 + n + i]});
+			}
+			for(let i = 0; i < n; i++) {
+				outputs.push({["D" + i]: [3, 1 + i, "horizontal", 4, 1 + i]});
+			}
+			outputs.push({C: [3, 1 + n, "horizontal", 4, 1 + n]});
+
+			super(
+				field, x, y, 3, 1 + Math.max(inputs.length, outputs.length),
+				inputs,
+				outputs,
+				`+${n}`
+			);
+			this.showPinLabels = true;
+		}
+		tick() {
+			let a = 0, b = 0;
+			for(let i = n - 1; i >= 0; i--) {
+				a = (a << 1) | this.get(`A${i}`);
+				b = (b << 1) | this.get(`B${i}`);
+			}
+			let c = a + b;
+			for(let i = 0; i < n; i++) {
+				this.set(`D${i}`, c & 1);
+				c >>= 1;
+			}
+			this.set("C", c);
+		}
+		serialize() {
+			return {
+				type: "m",
+				x: this.x,
+				y: this.y
+			};
+		}
+		static deserialize(field, {x, y}) {
+			return new SummatorCircuit(field, x, y);
+		}
+	};
+	return SummatorCircuit;
+}
+
 
 const CIRCUITS = {
 	0: ValueCircuit(0),
@@ -696,5 +746,6 @@ const CIRCUITS = {
 	d: DTriggerCircuit,
 	D: AsyncFallDTriggerCircuit,
 	"*": AsyncFallRegisterCircuit(8),
+	m: SummatorCircuit(8),
 	wire: Wire
 };
