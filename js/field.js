@@ -9,28 +9,38 @@ class Field {
 		if(this.node) {
 			this.mode = "move";
 			document.onkeydown = e => {
-				if(e.key == " ") {
+				if(e.ctrlKey) {
+					return;
+				}
+
+				const key = (e.altKey ? "Alt+" : "") + e.key;
+
+				if(key == " ") {
 					this.mode = "move";
-				} else if(e.key == "w") {
+				} else if(key == "w") {
 					this.mode = "wire";
-				} else if(CIRCUITS[e.key]) {
-					this.mode = e.key;
-				} else if(e.key == "Escape") {
+				} else if(CIRCUITS[key]) {
+					this.mode = key;
+				} else if(key == "Escape") {
 					this.selectComponent(null);
-				} else if(e.key == "Delete") {
+				} else if(key == "Delete") {
 					if(this.selectedComponent !== null) {
 						this.removeComponent(this.selectedComponent);
 						this.selectedComponent = null;
 					}
-				} else if(e.key == ".") {
+				} else if(key == ".") {
 					this.save();
-				} else if(e.key == ">") {
+				} else if(key == ">") {
 					this.saveExternal();
-				} else if(e.key == ",") {
+				} else if(key == ",") {
 					this.load();
-				} else if(e.key == "<") {
+				} else if(key == "<") {
 					this.loadExternal();
+				} else {
+					return;
 				}
+
+				e.preventDefault();
 			};
 			this.node.onmousedown = e => {
 				if(this.mode == "wire") {

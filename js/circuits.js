@@ -706,6 +706,65 @@ function AsyncFallRegisterCircuit(n) {
 	return AsyncFallRegisterCircuit;
 }
 
+function AsyncFallRAMCircuit(n) {
+	class AsyncFallRAMCircuit extends Component {
+		constructor(field, x, y) {
+			const inputs = [], outputs = [];
+			for(let i = 0; i < 8; i++) {
+				inputs.push({["D" + i]: [-1, 1 + i, "horizontal", -1, 1 + i]});
+				outputs.push({["Q" + i]: [3, 1 + i, "horizontal", 4, 1 + i]});
+			}
+			for(let i = 0; i < n; i++) {
+				inputs.push({["A" + i]: [-1, 9 + i, "horizontal", -1, 9 + i]});
+			}
+			inputs.push({C: [-1, 9 + n, "horizontal", -1, 9 + n]})
+
+			super(
+				field, x, y, 3, 10 + n,
+				inputs,
+				outputs,
+				`${2 ** n}`
+			);
+			this.showPinLabels = true;
+			this._value = [];
+			for(let i = 0; i < 2 ** n; i++) {
+				this._value.push(0);
+			}
+			this._prevC = 0;
+		}
+		tick() {
+			let addr = 0;
+			for(let i = 0; i < n; i++) {
+				addr |= this.get(`A${i}`) << i;
+			}
+			if(!this.get("C") && this._prevC) {
+				this._value[addr] = 0;
+				for(let i = 0; i < 8; i++) {
+					this._value[addr] |= this.get(`D${i}`) << i;
+				}
+			}
+			for(let i = 0; i < 8; i++) {
+				this.set(`Q${i}`, (this._value[addr] >> i) & 1);
+			}
+			this._prevC = this.get("C");
+		}
+		serialize() {
+			return {
+				type: `Alt+${n}`,
+				x: this.x,
+				y: this.y,
+				value: this._value
+			};
+		}
+		static deserialize(field, {x, y, value}) {
+			const ram = new AsyncFallRAMCircuit(field, x, y);
+			ram._value = value;
+			return ram;
+		}
+	};
+	return AsyncFallRAMCircuit;
+}
+
 function SummatorCircuit(n) {
 	class SummatorCircuit extends Component {
 		constructor(field, x, y) {
@@ -785,5 +844,8 @@ const CIRCUITS = {
 	D: AsyncFallDTriggerCircuit,
 	"*": AsyncFallRegisterCircuit(8),
 	m: SummatorCircuit(8),
+	"Alt+2": AsyncFallRAMCircuit(2),
+	"Alt+4": AsyncFallRAMCircuit(4),
+	"Alt+8": AsyncFallRAMCircuit(8),
 	wire: Wire
 };
